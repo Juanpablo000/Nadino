@@ -1,16 +1,14 @@
 package com.mycompany.nadino;
 import java.util.*;
 
-
-
 public class Nadino {
     static ArrayList<Libro> libros = new ArrayList();
     HashMap<String, ArrayList> mapAutores = new HashMap<>();
-    
+    static Scanner lectura = new Scanner (System.in);
     public static void main(String[] args) {
         
         try{
-            Scanner lectura = new Scanner (System.in);
+            
         int opc = -1;
         do{
             System.out.println("Ingresa una opción");        
@@ -19,29 +17,17 @@ public class Nadino {
             
             switch (opc) {
                 case 1:
-                    System.out.println("Titulo");
-                    String salida_titulo = lectura.next();
-                    System.out.println("Autor");
-                    String salida_autor = lectura.next();
-                    System.out.println("Fecha publicación");
-                    int salida_año = lectura.nextInt();
-                    System.out.println("Genero");
-                    String salida_genero = lectura.next();
-                    System.out.println("Editorial");
-                    String salida_editorial = lectura.next();
-                    
-                    Libro lib = new Libro(salida_titulo,salida_autor,salida_año,salida_genero,salida_editorial);
-                    libros.add(lib);
-                    
+                    crearLibro();
                     break;
                 case 2:
-                    
+                    buscar(false, true);
                     break;
                 case 3:
-                    buscar();   
+                    buscar(false, false);   
                     break;
 
                 case 4:
+                    buscar(true, false);
                     break;
                 case 5:
                     break;
@@ -54,16 +40,35 @@ public class Nadino {
         }
     }
     
-    public static void buscar(){
-        Scanner lectura = new Scanner (System.in);
+    public static void crearLibro(){
+        System.out.println("Titulo");
+        String salida_titulo = lectura.next();
+        System.out.println("Autor");
+        String salida_autor = lectura.next();
+        System.out.println("Fecha publicación");
+        int salida_año = lectura.nextInt();
+        System.out.println("Genero");
+        String salida_genero = lectura.next();
+        System.out.println("Editorial");
+        String salida_editorial = lectura.next();
+
+        Libro lib = new Libro(salida_titulo,salida_autor,salida_año,salida_genero,salida_editorial);
+        libros.add(lib);
+   
+    }
+    
+    public static void buscar(boolean eliminar, boolean editar){
         System.out.println("Elija una opción de busqueda");        
         System.out.println("\n 1. Buscar por nombre \n 2. Buscar por autor \n 3. Buscar por fecha de publicación \n 4. Buscar por genero \n 5. Buscar por editorial");
         int opc = lectura.nextInt();
-
+        int contador;
+        
         switch (opc) {
             case 1:
                 System.out.println("Ingrese el nombre del libro");
                 String salida_titulo = lectura.next();
+                contador =0;
+                
                 for (Libro libro : libros) {
                     if(libro.getTitulo().equals(salida_titulo)){
                          System.out.println("Titulo: " + libro.getTitulo());
@@ -72,6 +77,26 @@ public class Nadino {
                          System.out.println("Genero: " + libro.getGenero());
                          System.out.println("Editorial: " + libro.getEditorial()+"\n");
                     }
+
+                    if(eliminar==true){
+                        libros.remove(libro);
+                    }else if(editar==true){
+                        
+                        System.out.println("Titulo");
+                        libro.setTitulo(lectura.next());
+                        System.out.println("Autor");
+                        libro.setAutor(lectura.next());
+                        System.out.println("Fecha publicación");
+                        libro.setAño(lectura.nextInt());
+                        System.out.println("Genero");
+                        libro.setGenero(lectura.next());
+                        System.out.println("Editorial");
+                        libro.setEditorial(lectura.next());
+                        
+                        //crearLibro();
+                        libros.set(contador, libro);
+                    }
+                    contador++;
                 }
 
                 //buscar(salida_titulo);
@@ -79,6 +104,7 @@ public class Nadino {
             case 2:
                 System.out.println("Ingrese el autor del libro");
                 String salida_autor = lectura.next();
+                contador =0;
 
                 for (Libro libro : libros) {
                     if(libro.getAutor().equals(salida_autor)){
@@ -88,6 +114,25 @@ public class Nadino {
                          System.out.println("Genero: " + libro.getGenero());
                          System.out.println("Editorial: " + libro.getEditorial()+"\n");
                     }
+                    
+                    if(eliminar==true){
+                        libros.remove(libro);
+                    }else if(editar==true){
+                        
+                        System.out.println("Titulo");
+                        libro.setTitulo(lectura.next());
+                        System.out.println("Autor");
+                        libro.setAutor(lectura.next());
+                        System.out.println("Fecha publicación");
+                        libro.setAño(lectura.nextInt());
+                        System.out.println("Genero");
+                        libro.setGenero(lectura.next());
+                        System.out.println("Editorial");
+                        libro.setEditorial(lectura.next());
+                        
+                        libros.set(contador, libro);
+                    }
+                    contador++;
                 }
 
                 //buscar(salida_autor);
@@ -95,6 +140,7 @@ public class Nadino {
             case 3:
                 System.out.println("Ingrese la fecha de publicación del libro");
                 int salida_año = lectura.nextInt();
+                contador =0;
 
                 for (Libro libro : libros) {
                     if(libro.getAño()==salida_año){
@@ -104,12 +150,32 @@ public class Nadino {
                          System.out.println("Genero: " + libro.getGenero());
                          System.out.println("Editorial: " + libro.getEditorial()+"\n");
                     }
+                    
+                    if(eliminar==true){
+                        libros.remove(libro);
+                    }else if(editar==true){
+                        
+                        System.out.println("Titulo");
+                        libro.setTitulo(lectura.next());
+                        System.out.println("Autor");
+                        libro.setAutor(lectura.next());
+                        System.out.println("Fecha publicación");
+                        libro.setAño(lectura.nextInt());
+                        System.out.println("Genero");
+                        libro.setGenero(lectura.next());
+                        System.out.println("Editorial");
+                        libro.setEditorial(lectura.next());
+                        
+                        libros.set(contador, libro);
+                    }
+                    contador++;
                 }
 
                 break;
             case 4:
                 System.out.println("Ingrese el genero del libro");
                 String salida_genero = lectura.next();
+                contador=0;
 
                 for (Libro libro : libros) {
                     if(libro.getGenero().equals(salida_genero)){
@@ -119,12 +185,32 @@ public class Nadino {
                          System.out.println("Genero: " + libro.getGenero());
                          System.out.println("Editorial: " + libro.getEditorial()+"\n");
                     }
+                    if(eliminar==true){
+                        libros.remove(libro);
+                    }else if(editar==true){
+                        
+                        System.out.println("Titulo");
+                        libro.setTitulo(lectura.next());
+                        System.out.println("Autor");
+                        libro.setAutor(lectura.next());
+                        System.out.println("Fecha publicación");
+                        libro.setAño(lectura.nextInt());
+                        System.out.println("Genero");
+                        libro.setGenero(lectura.next());
+                        System.out.println("Editorial");
+                        libro.setEditorial(lectura.next());
+                        
+                        libros.set(contador, libro);
+                    }
+                    contador++;
+                    
                 }
                 //buscar(salida_genero);
                 break;
             case 5:
                 System.out.println("Ingrese la editorial del libro");
                 String salida_editorial = lectura.next();
+                contador=0;
 
                 for (Libro libro : libros) {
                     if(libro.getEditorial().equals(salida_editorial)){
@@ -134,6 +220,25 @@ public class Nadino {
                          System.out.println("Genero: " + libro.getGenero());
                          System.out.println("Editorial: " + libro.getEditorial()+"\n");
                     }
+                    
+                    if(eliminar==true){
+                        libros.remove(libro);
+                    }else if(editar==true){
+                        
+                        System.out.println("Titulo");
+                        libro.setTitulo(lectura.next());
+                        System.out.println("Autor");
+                        libro.setAutor(lectura.next());
+                        System.out.println("Fecha publicación");
+                        libro.setAño(lectura.nextInt());
+                        System.out.println("Genero");
+                        libro.setGenero(lectura.next());
+                        System.out.println("Editorial");
+                        libro.setEditorial(lectura.next());
+
+                        libros.set(contador, libro);
+                    }
+                    contador++;
                 }
                 break;
             default:
