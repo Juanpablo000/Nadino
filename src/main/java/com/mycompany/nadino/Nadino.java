@@ -3,7 +3,11 @@ import java.util.*;
 
 public class Nadino {
     static ArrayList<Libro> libros = new ArrayList();
-    HashMap<String, ArrayList> mapAutores = new HashMap<>();
+    static ArrayList<Libro> librostmp = new ArrayList();
+    static int c=0;
+    //static HashMap<Integer, Libro> indices_libros = new HashMap<>();
+    
+    //HashMap<String, ArrayList> mapAutores = new HashMap<>();
     static Scanner lectura = new Scanner (System.in);
     public static void main(String[] args) {
         
@@ -52,8 +56,9 @@ public class Nadino {
         System.out.println("Editorial");
         String salida_editorial = lectura.next();
 
-        Libro lib = new Libro(salida_titulo,salida_autor,salida_año,salida_genero,salida_editorial);
+        Libro lib = new Libro(c,salida_titulo,salida_autor,salida_año,salida_genero,salida_editorial,"disponible");
         libros.add(lib);
+        c++;
    
     }
     
@@ -67,39 +72,78 @@ public class Nadino {
             case 1:
                 System.out.println("Ingrese el nombre del libro");
                 String salida_titulo = lectura.next();
-                contador =0;
-                
+
                 for (Libro libro : libros) {
                     if(libro.getTitulo().equals(salida_titulo)){
+                         //System.out.println("# "+ contador);
+                         System.out.println("Id: "+ libro.getId());
                          System.out.println("Titulo: " + libro.getTitulo());
                          System.out.println("Autor: " + libro.getAutor());
                          System.out.println("Fecha publicación: " + libro.getAño());
                          System.out.println("Genero: " + libro.getGenero());
                          System.out.println("Editorial: " + libro.getEditorial()+"\n");
                     }
-
-                    if(eliminar==true){
-                        libros.remove(libro);
-                    }else if(editar==true){
-                        
-                        System.out.println("Titulo");
-                        libro.setTitulo(lectura.next());
-                        System.out.println("Autor");
-                        libro.setAutor(lectura.next());
-                        System.out.println("Fecha publicación");
-                        libro.setAño(lectura.nextInt());
-                        System.out.println("Genero");
-                        libro.setGenero(lectura.next());
-                        System.out.println("Editorial");
-                        libro.setEditorial(lectura.next());
-                        
-                        //crearLibro();
-                        libros.set(contador, libro);
+                    
+                }
+                                    
+                if(eliminar==true){
+                    System.out.println("Ingresa el id del libro a eliminar");
+                    int num_libro = lectura.nextInt();
+                    if(num_libro<libros.size()){
+                        libros.remove(num_libro);
+                    }else{
+                        System.out.println("Opción invalida");
                     }
-                    contador++;
+ 
+
+                }else if(editar==true){
+                    System.out.println("Ingresa el id del libro a editar");
+                    int num_libro = lectura.nextInt();
+                    String respuesta="n";
+                    if(num_libro<libros.size()){
+                        Libro tmp = libros.get(num_libro);
+                        
+                        System.out.println("¿Modificara el titulo? (s/n)");
+                        respuesta=lectura.next();
+                        if(respuesta.equals("s")){
+                            System.out.println("Nuevo titulo");
+                            tmp.setTitulo(lectura.next());
+                        }
+                        
+                        System.out.println("¿Modificara el autor? (s/n)");
+                        respuesta=lectura.next();
+                        if(respuesta.equals("s")){
+                            System.out.println("Autor");
+                            tmp.setAutor(lectura.next());
+                        }
+                        
+                        System.out.println("¿Modificara la fecha publicación? (s/n)");
+                        respuesta=lectura.next();
+                        if(respuesta.equals("s")){
+                            System.out.println("Fecha publicación");
+                            tmp.setAño(lectura.nextInt());
+                        }
+                        
+                        System.out.println("¿Modificara el genero? (s/n)");
+                        respuesta=lectura.next();
+                        if(respuesta.equals("s")){
+                             System.out.println("Genero");
+                             tmp.setGenero(lectura.next());
+                        }
+                        
+                        System.out.println("¿Modificara el genero? (s/n)");
+                        respuesta=lectura.next();
+                        if(respuesta.equals("s")){
+                            System.out.println("Editorial");
+                            tmp.setEditorial(lectura.next());
+                        }
+                        
+                        libros.set(num_libro, tmp);
+                    }else{
+                        System.out.println("Opción invalida");
+                    }
                 }
 
-                //buscar(salida_titulo);
                 break;
             case 2:
                 System.out.println("Ingrese el autor del libro");
