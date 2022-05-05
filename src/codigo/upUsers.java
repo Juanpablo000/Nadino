@@ -6,6 +6,8 @@ package codigo;
 
 import static codigo.Home.JP_content;
 import java.awt.BorderLayout;
+import java.sql.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -13,11 +15,30 @@ import java.awt.BorderLayout;
  */
 public class upUsers extends javax.swing.JPanel {
 
-    /**
-     * Creates new form upUsers
-     */
+    int idus;
+    boolean edit;
     public upUsers() {
         initComponents();
+        edit = false;
+    }
+    
+    public upUsers(int u_idUsuario, String u_PrimerNombre, String u_SegundoNombre, String u_PrimerApellido, String u_SegundoApellido, String u_Direccion, int u_telefono) {
+        initComponents();
+        
+        //conn = new Connect();
+        //reg = conn.getConnection();
+        /*
+        String nTel;
+        nTel= u_telefono.toString();
+        idus = u_idUsuario;
+        txtPrimerNombre.setText(u_PrimerNombre);
+        txtSegundoNombre.setText(u_SegundoNombre);
+        txtPrimerApellido.setText(u_PrimerApellido);
+        txtSegundoApellido.setText(u_SegundoApellido);
+        txtDomicilio.setText(u_Direccion);
+        txtTelefono.setText();
+        edit = true;
+        */
     }
 
     /**
@@ -35,15 +56,15 @@ public class upUsers extends javax.swing.JPanel {
         Text5 = new javax.swing.JLabel();
         Text2 = new javax.swing.JLabel();
         Text1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
+        txtPrimerNombre = new javax.swing.JTextField();
+        txtTelefono = new javax.swing.JTextField();
+        txtSegundoApellido = new javax.swing.JTextField();
+        txtPrimerApellido = new javax.swing.JTextField();
+        txtDomicilio = new javax.swing.JTextField();
         Text6 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        txtSegundoNombre = new javax.swing.JTextField();
+        btnRegistrar = new javax.swing.JButton();
+        btnVolver = new javax.swing.JButton();
 
         setMinimumSize(new java.awt.Dimension(750, 430));
         setPreferredSize(new java.awt.Dimension(750, 430));
@@ -73,106 +94,139 @@ public class upUsers extends javax.swing.JPanel {
         Text1.setText("Teléfono");
         add(Text1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 240, -1, -1));
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtPrimerNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtPrimerNombreActionPerformed(evt);
             }
         });
-        add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 230, -1));
+        add(txtPrimerNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 100, 230, -1));
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txtTelefono.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txtTelefonoActionPerformed(evt);
             }
         });
-        add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 270, 230, -1));
+        add(txtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 270, 230, -1));
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        txtSegundoApellido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                txtSegundoApellidoActionPerformed(evt);
             }
         });
-        add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 180, 230, -1));
+        add(txtSegundoApellido, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 180, 230, -1));
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        txtPrimerApellido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                txtPrimerApellidoActionPerformed(evt);
             }
         });
-        add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 230, -1));
+        add(txtPrimerApellido, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 230, -1));
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+        txtDomicilio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
+                txtDomicilioActionPerformed(evt);
             }
         });
-        add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 270, 230, -1));
+        add(txtDomicilio, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 270, 230, -1));
 
         Text6.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         Text6.setText("Segundo nombre");
         add(Text6, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 70, -1, -1));
 
-        jTextField6.addActionListener(new java.awt.event.ActionListener() {
+        txtSegundoNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField6ActionPerformed(evt);
+                txtSegundoNombreActionPerformed(evt);
             }
         });
-        add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 100, 230, -1));
+        add(txtSegundoNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 100, 230, -1));
 
-        jButton3.setBackground(new java.awt.Color(54, 33, 89));
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Registrar");
-        jButton3.setBorderPainted(false);
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnRegistrar.setBackground(new java.awt.Color(54, 33, 89));
+        btnRegistrar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
+        btnRegistrar.setText("Registrar");
+        btnRegistrar.setBorderPainted(false);
+        btnRegistrar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnRegistrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnRegistrarActionPerformed(evt);
             }
         });
-        add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 330, 90, 40));
+        add(btnRegistrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 330, 90, 40));
 
-        jButton4.setBackground(new java.awt.Color(54, 33, 89));
-        jButton4.setForeground(new java.awt.Color(255, 255, 255));
-        jButton4.setText("Volver");
-        jButton4.setBorderPainted(false);
-        jButton4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        btnVolver.setBackground(new java.awt.Color(54, 33, 89));
+        btnVolver.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
+        btnVolver.setText("Volver");
+        btnVolver.setBorderPainted(false);
+        btnVolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                btnVolverActionPerformed(evt);
             }
         });
-        add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 330, 90, 40));
+        add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 330, 90, 40));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField6ActionPerformed
+    private void txtSegundoNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSegundoNombreActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField6ActionPerformed
+    }//GEN-LAST:event_txtSegundoNombreActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
+    private void txtDomicilioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDomicilioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
+    }//GEN-LAST:event_txtDomicilioActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtTelefonoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefonoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtTelefonoActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void txtPrimerApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrimerApellidoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_txtPrimerApellidoActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtPrimerNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrimerNombreActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtPrimerNombreActionPerformed
 
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
+    private void txtSegundoApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSegundoApellidoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
+    }//GEN-LAST:event_txtSegundoApellidoActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
+        String primerNombre = txtPrimerNombre.getText(); 
+        String segundoNombre = txtSegundoNombre.getText();
+        String primerApellido = txtPrimerApellido.getText(); 
+        String segundoApellido = txtSegundoApellido.getText();
+        String Direccion = txtDomicilio.getText(); 
+        int Telefono = Integer.parseInt(txtTelefono.getText());
+        
+        try{
+            Connection con = Conexion.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO Usuarios (PrimerNombre,SegundoNombre,PrimerApellido, SegundoApellido, Direccion, Telefono, DevolucionesExtratemporales) VALUES (?,?,?,?,?,?,?)");
+            ps.setString(1, primerNombre);
+            ps.setString(2, segundoNombre);
+            ps.setString(3, primerApellido);
+            ps.setString(4, segundoApellido);
+            ps.setString(5, Direccion);
+            ps.setInt(6, Telefono);
+            ps.setShort(7, (short)0);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Usuario añadido exitosamente");
+            limpiar();
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+    }//GEN-LAST:event_btnRegistrarActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void limpiar(){
+        txtPrimerNombre.setText("");
+        txtSegundoNombre.setText("");
+        txtPrimerApellido.setText("");
+        txtSegundoApellido.setText("");
+        txtDomicilio.setText("");
+        txtTelefono.setText("");
+    }
+    
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
         // Abrir sección
         Usuarios p1 = new Usuarios();
         p1.setSize(750, 430);
@@ -182,7 +236,7 @@ public class upUsers extends javax.swing.JPanel {
         JP_content.add(p1, BorderLayout.CENTER);
         JP_content.revalidate();
         JP_content.repaint();     
-    }//GEN-LAST:event_jButton4ActionPerformed
+    }//GEN-LAST:event_btnVolverActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -193,13 +247,13 @@ public class upUsers extends javax.swing.JPanel {
     private javax.swing.JLabel Text5;
     private javax.swing.JLabel Text6;
     private javax.swing.JLabel Title;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+    private javax.swing.JButton btnRegistrar;
+    private javax.swing.JButton btnVolver;
+    private javax.swing.JTextField txtDomicilio;
+    private javax.swing.JTextField txtPrimerApellido;
+    private javax.swing.JTextField txtPrimerNombre;
+    private javax.swing.JTextField txtSegundoApellido;
+    private javax.swing.JTextField txtSegundoNombre;
+    private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 }

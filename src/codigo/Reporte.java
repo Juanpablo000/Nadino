@@ -80,6 +80,7 @@ public class Reporte extends javax.swing.JPanel {
         jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 580, 200));
 
         jButton2.setBackground(new java.awt.Color(54, 33, 89));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Actualizar");
         jButton2.setBorderPainted(false);

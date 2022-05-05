@@ -93,6 +93,7 @@ public class Prestamos extends javax.swing.JPanel {
         add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 10, 10, 350));
 
         jButton2.setBackground(new java.awt.Color(54, 33, 89));
+        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Reservar");
         jButton2.setBorderPainted(false);

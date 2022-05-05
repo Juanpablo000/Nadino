@@ -5,7 +5,13 @@
 package codigo;
 
 import static codigo.Home.JP_content;
+import java.sql.PreparedStatement;
+import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
+import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -18,6 +24,7 @@ public class Usuarios extends javax.swing.JPanel {
      */
     public Usuarios() {
         initComponents();
+        cargarTabla();
     }
 
     /**
@@ -33,11 +40,11 @@ public class Usuarios extends javax.swing.JPanel {
         Title = new javax.swing.JLabel();
         usrnm = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jB_Actualizar = new javax.swing.JButton();
-        jB_Nuevo = new javax.swing.JButton();
-        jB_Eliminar = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        tablaUsuarios = new javax.swing.JTable();
+        btnActualizar = new javax.swing.JButton();
+        btnNuevo = new javax.swing.JButton();
+        btnEliminar = new javax.swing.JButton();
+        btnBuscar = new javax.swing.JButton();
 
         setMaximumSize(new java.awt.Dimension(750, 430));
         setMinimumSize(new java.awt.Dimension(710, 430));
@@ -63,22 +70,19 @@ public class Usuarios extends javax.swing.JPanel {
         });
         JPbody.add(usrnm, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 530, 30));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaUsuarios.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "Id", "Primer nombre", "Segundo nombre", "Primer apellido", "Segundo apellido", "Domicilio", "Telefono"
+                "Id", "Primer nombre", "Segundo nombre", "Primer apellido", "Segundo apellido", "Domicilio", "Telefono", "Devoluciones Extratemporales"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Short.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -89,50 +93,59 @@ public class Usuarios extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaUsuariosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaUsuarios);
 
         JPbody.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 660, 240));
 
-        jB_Actualizar.setBackground(new java.awt.Color(54, 33, 89));
-        jB_Actualizar.setForeground(new java.awt.Color(255, 255, 255));
-        jB_Actualizar.setText("Actualizar");
-        jB_Actualizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jB_Actualizar.addActionListener(new java.awt.event.ActionListener() {
+        btnActualizar.setBackground(new java.awt.Color(54, 33, 89));
+        btnActualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnActualizar.setForeground(new java.awt.Color(255, 255, 255));
+        btnActualizar.setText("Actualizar");
+        btnActualizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jB_ActualizarActionPerformed(evt);
+                btnActualizarActionPerformed(evt);
             }
         });
-        JPbody.add(jB_Actualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 340, 100, 40));
+        JPbody.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 340, 100, 40));
 
-        jB_Nuevo.setBackground(new java.awt.Color(54, 33, 89));
-        jB_Nuevo.setForeground(new java.awt.Color(255, 255, 255));
-        jB_Nuevo.setText("Nuevo");
-        jB_Nuevo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jB_Nuevo.addActionListener(new java.awt.event.ActionListener() {
+        btnNuevo.setBackground(new java.awt.Color(54, 33, 89));
+        btnNuevo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnNuevo.setForeground(new java.awt.Color(255, 255, 255));
+        btnNuevo.setText("Nuevo");
+        btnNuevo.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jB_NuevoActionPerformed(evt);
+                btnNuevoActionPerformed(evt);
             }
         });
-        JPbody.add(jB_Nuevo, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, 80, 40));
+        JPbody.add(btnNuevo, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, 80, 40));
 
-        jB_Eliminar.setBackground(new java.awt.Color(54, 33, 89));
-        jB_Eliminar.setForeground(new java.awt.Color(255, 255, 255));
-        jB_Eliminar.setText("Eliminar");
-        jB_Eliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jB_Eliminar.addActionListener(new java.awt.event.ActionListener() {
+        btnEliminar.setBackground(new java.awt.Color(54, 33, 89));
+        btnEliminar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEliminar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEliminar.setText("Eliminar");
+        btnEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jB_EliminarActionPerformed(evt);
+                btnEliminarActionPerformed(evt);
             }
         });
-        JPbody.add(jB_Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 340, -1, 40));
+        JPbody.add(btnEliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 340, 80, 40));
 
-        jButton2.setBackground(new java.awt.Color(54, 33, 89));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Buscar");
-        jButton2.setBorderPainted(false);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.setDefaultCapable(false);
-        JPbody.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 50, -1, 30));
+        btnBuscar.setBackground(new java.awt.Color(54, 33, 89));
+        btnBuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
+        btnBuscar.setText("Buscar");
+        btnBuscar.setBorderPainted(false);
+        btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBuscar.setDefaultCapable(false);
+        JPbody.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 50, 70, 30));
 
         add(JPbody, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 710, 440));
     }// </editor-fold>//GEN-END:initComponents
@@ -146,11 +159,105 @@ public class Usuarios extends javax.swing.JPanel {
         //nothing
     }//GEN-LAST:event_usrnmMouseReleased
 
-    private void jB_ActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_ActualizarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jB_ActualizarActionPerformed
+    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
+        
+        /*
+        String primerNombre = txtPrimerNombre.getText(); 
+        String segundoNombre = txtSegundoNombre.getText();
+        String primerApellido = txtPrimerApellido.getText(); 
+        String segundoApellido = txtSegundoApellido.getText();
+        String Direccion = txtDomicilio.getText(); 
+        int Telefono = Integer.parseInt(txtTelefono.getText());
+        
+        try{
+            Connection con = Conexion.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO Usuarios (PrimerNombre,SegundoNombre,PrimerApellido, SegundoApellido, Direccion, Telefono, DevolucionesExtratemporales) VALUES (?,?,?,?,?,?,?)");
+            ps.setString(1, primerNombre);
+            ps.setString(2, segundoNombre);
+            ps.setString(3, primerApellido);
+            ps.setString(4, segundoApellido);
+            ps.setString(5, Direccion);
+            ps.setInt(6, Telefono);
+            ps.setShort(7, (short)0);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Usuario añadido exitosamente");
+            limpiar();
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+        */
+        
+        PreparedStatement ps;
+        ResultSet rs; 
+        
+        try {
+            int idcell = tablaUsuarios.getSelectedRow();
+            if(idcell <= -1){
+                javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar el libro a editar. \n", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
+            else{
+                
+                Connection con = Conexion.getConnection();
+                ps = con.prepareStatement("select * from Usuarios");
+                rs = ps.executeQuery();
+                
+                //Statement stm = reg.createStatement();
+                //ResultSet counter = stm.executeQuery("SELECT * FROM `books`");
 
-    private void jB_NuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_NuevoActionPerformed
+                //stm ->ps
+                //reg -> con
+                //stm -> ps
+                //counter -> rs
+                
+                int count = 0;
+                while(rs.next()){
+                    count++;
+                }
+
+                String list[][] = new String[count][12];
+                int i = 0;
+                ResultSet re = ps.executeQuery("SELECT * FROM Usuarios");
+                while(re.next()){
+                    list[i][0] = re.getString("IdUsuario");
+                    list[i][1] = re.getString("PrimerNombre");
+                    list[i][2] = re.getString("SegundoNombre");
+                    list[i][3] = re.getString("PrimerApellido");
+                    list[i][4] = re.getString("SegundoApellido");
+                    list[i][5] = re.getString("Direccion");
+                    list[i][6] = re.getString("Telefono");
+                    list[i][7] = re.getString("DevolucionesExtratemporales");
+                    i++;
+                }
+                String id = list[idcell][0];
+                if(id == null || id.equals("")){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar el libro a editar. \n", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
+                else{
+                    String id_Usuario = ""+list[idcell][0];
+                    String primer_Nombre = list[idcell][1];
+                    String segundo_Nombre = list[idcell][2];
+                    String primer_Apellido = list[idcell][3];
+                    String segundo_Apellido = list[idcell][4];
+                    String direccion = list[idcell][5];
+                    String telefono = list[idcell][6];
+                    String devolucionesExtratemporales = list[idcell][7];
+                 
+                    //upUsers us = new upUsers(id_Usuario, primer_Nombre, segundo_Nombre, primer_Apellido, segundo_Apellido, direccion, telefono, devolucionesExtratemporales);
+                    //us.setSize(750, 430);
+                    //us.setLocation(5, 5);
+
+                    //JP_content.removeAll();
+                    //JP_content.add(us, BorderLayout.CENTER);
+                    //JP_content.revalidate();
+                    //JP_content.repaint();
+                }
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+    }//GEN-LAST:event_btnActualizarActionPerformed
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // Abrir sección
         upUsers p1 = new upUsers();
         p1.setSize(750, 430);
@@ -160,22 +267,83 @@ public class Usuarios extends javax.swing.JPanel {
         JP_content.add(p1, BorderLayout.CENTER);
         JP_content.revalidate();
         JP_content.repaint();
-    }//GEN-LAST:event_jB_NuevoActionPerformed
+    }//GEN-LAST:event_btnNuevoActionPerformed
 
-    private void jB_EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_EliminarActionPerformed
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jB_EliminarActionPerformed
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
+    private void tablaUsuariosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaUsuariosMouseClicked
+       /*
+        try{
+            PreparedStatement ps;
+            ResultSet rs;
+            int fila = tablaUsuarios.getSelectedRow();
+            int id = Integer.parseInt(tablaUsuarios.getValueAt(fila, 0).toString());
+           
+            Connection con = Conexion.getConnection();
+           
+            ps = con.prepareStatement("INSERT INTO Usuarios (PrimerNombre,SegundoNombre,PrimerApellido, SegundoApellido, Direccion, Telefono, DevolucionesExtratemporales) VALUES (?,?,?,?,?,?,?)");
+            ps.setString(1, primerNombre);
+            ps.setString(2, segundoNombre);
+            ps.setString(3, primerApellido);
+            ps.setString(4, segundoApellido);
+            ps.setString(5, Direccion);
+            ps.setInt(6, Telefono);
+            ps.setShort(7, (short)0);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Usuario añadido exitosamente");
+           
+           
+       }catch(){
+       
+       }
+    */
+    }//GEN-LAST:event_tablaUsuariosMouseClicked
+    
+    private void cargarTabla(){
+        DefaultTableModel modeloTabla = (DefaultTableModel)tablaUsuarios.getModel();
+        modeloTabla.setRowCount(0);
+        PreparedStatement ps;
+        ResultSet rs;
+        ResultSetMetaData rsmd;
+        int columnas;
+        
+        int[] anchos = {10,50,50,50,50,50,50,50};
+        for(int i=0; i<tablaUsuarios.getColumnCount();i++){
+            tablaUsuarios.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+        }
+        
+        try{
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("select * from Usuarios");
+            rs = ps.executeQuery();
+            rsmd = rs.getMetaData();
+            columnas = rsmd.getColumnCount();
+            
+            while(rs.next()){
+                Object[] fila = new Object[columnas];
+                for(int indice = 0; indice <columnas; indice++){
+                    fila[indice] = rs.getObject(indice +1);
+                }
+                modeloTabla.addRow(fila);
+                
+            }
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel JPbody;
     private javax.swing.JLabel Title;
-    private javax.swing.JButton jB_Actualizar;
-    private javax.swing.JButton jB_Eliminar;
-    private javax.swing.JButton jB_Nuevo;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEliminar;
+    private javax.swing.JButton btnNuevo;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tablaUsuarios;
     private javax.swing.JTextField usrnm;
     // End of variables declaration//GEN-END:variables
 }

@@ -6,6 +6,8 @@ package codigo;
 
 import static codigo.Home.JP_content;
 import java.awt.BorderLayout;
+import java.sql.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -38,14 +40,14 @@ public class upLibros extends javax.swing.JPanel {
         Text10 = new javax.swing.JLabel();
         Text14 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jTextField4 = new javax.swing.JTextField();
-        jTextField5 = new javax.swing.JTextField();
-        jTextField6 = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        txtEjemplares = new javax.swing.JTextField();
+        txtTitulo = new javax.swing.JTextField();
+        txtAutor = new javax.swing.JTextField();
+        txtAño = new javax.swing.JTextField();
+        txtCategoria = new javax.swing.JTextField();
+        txtEdicion = new javax.swing.JTextField();
+        btnVolver = new javax.swing.JButton();
+        btnAñadir = new javax.swing.JButton();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -83,41 +85,43 @@ public class upLibros extends javax.swing.JPanel {
         jSeparator3.setOrientation(javax.swing.SwingConstants.VERTICAL);
         jSeparator3.setPreferredSize(new java.awt.Dimension(200, 10));
         jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 20, 10, 250));
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 240, -1));
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 240, -1));
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 240, -1));
-        jPanel1.add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, 240, -1));
-        jPanel1.add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 140, 240, -1));
-        jPanel1.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 240, -1));
+        jPanel1.add(txtEjemplares, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 240, -1));
+        jPanel1.add(txtTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 240, -1));
+        jPanel1.add(txtAutor, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 240, -1));
+        jPanel1.add(txtAño, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, 240, -1));
+        jPanel1.add(txtCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 140, 240, -1));
+        jPanel1.add(txtEdicion, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 240, -1));
 
-        jButton2.setBackground(new java.awt.Color(54, 33, 89));
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Volver");
-        jButton2.setBorderPainted(false);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnVolver.setBackground(new java.awt.Color(54, 33, 89));
+        btnVolver.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVolver.setForeground(new java.awt.Color(255, 255, 255));
+        btnVolver.setText("Volver");
+        btnVolver.setBorderPainted(false);
+        btnVolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnVolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnVolverActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 310, 90, 40));
+        jPanel1.add(btnVolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 310, 90, 40));
 
-        jButton3.setBackground(new java.awt.Color(54, 33, 89));
-        jButton3.setForeground(new java.awt.Color(255, 255, 255));
-        jButton3.setText("Añadir");
-        jButton3.setBorderPainted(false);
-        jButton3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btnAñadir.setBackground(new java.awt.Color(54, 33, 89));
+        btnAñadir.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnAñadir.setForeground(new java.awt.Color(255, 255, 255));
+        btnAñadir.setText("Añadir");
+        btnAñadir.setBorderPainted(false);
+        btnAñadir.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnAñadir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btnAñadirActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, 90, 40));
+        jPanel1.add(btnAñadir, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, 90, 40));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 450));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
         // Abrir sección
         Libros p1 = new Libros();
         p1.setSize(750, 430);
@@ -127,12 +131,146 @@ public class upLibros extends javax.swing.JPanel {
         JP_content.add(p1, BorderLayout.CENTER);
         JP_content.revalidate();
         JP_content.repaint();        
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnVolverActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void limpiar(){
+        txtTitulo.setText("");
+        txtAutor.setText("");
+        txtAño.setText("");
+        txtAño.setText("");        
+        txtCategoria.setText("");
+        txtEjemplares.setText("");
+    }
+    
+    
+     /*
+        String salida="";
+        try{
+            Statement sql = Conexion.getConnection().createStatement();
+            String consulta = "SELECT name FROM master.dbo.sysdatabases";
+        
+            ResultSet resultado = sql.executeQuery(consulta);
+        
+            while(resultado.next()){
+                 salida+=resultado.getString(1) + "\n";   
+            }
+            JOptionPane.showMessageDialog(null, salida);
+        catch(){
+        
+        }
+        */
+    
+    private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
+        Connection con = null;
+        PreparedStatement prSt = null;
+        ResultSet rs = null;
+       
+        String salida="";
+       
+        try{
+            String titulo = txtTitulo.getText(); //IdTitulo
+            
+            /*
+            String autor = txtAutor.getText(); //IdAutor
+            int año = Integer.parseInt(txtAño.getText());
+            short edicion = Short.parseShort(txtEdicion.getText());
+            String categoria = txtCategoria.getText();//IdCategoria
+            short ejemplares = Short.parseShort(txtEjemplares.getText());
+            */
+            
+            con = Conexion.getConnection();
+            String query = "SELECT * FROM Titulos WHERE Titulo = ?";
+            prSt = con.prepareStatement(query);
+            prSt.setString(1, titulo);
+            rs = prSt.executeQuery();
+            while(rs.next()){
+                JOptionPane.showMessageDialog(null, rs.getString("Titulo"));
+            }
+            rs.close();
+           
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+        
+        /*
+        String titulo = txtTitulo.getText(); //IdTitulo
+        String autor = txtAutor.getText(); //IdAutor
+        int año = Integer.parseInt(txtAño.getText());
+        short edicion = Short.parseShort(txtEdicion.getText());
+        String categoria = txtCategoria.getText();//IdCategoria
+        short ejemplares = Short.parseShort(txtEjemplares.getText());
+        
+        try{
+            Connection con = Conexion.getConnection();
+            PreparedStatement ps = con.prepareStatement("INSERT INTO Libros (IdTitulo,IdAutor,Año,IdCategoria, Edicion, Ejemplares, Disponibles) VALUES (?,?,?,?,?,?,?)");
+            ps.setString(1, titulo);
+            ps.setString(2, autor);
+            ps.setInt(3, año);
+            ps.setShort(4, edicion);
+            ps.setString(5, categoria);
+            ps.setShort(6, ejemplares);
+            ps.executeUpdate();
+            JOptionPane.showMessageDialog(null, "Registro añadido exitosamente");
+            
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+        */
+        
+        
+        
+        /*
+        
 
+
+            
+            Statement sql = Conexion.getConnection().createStatement();
+            
+            //Busco si existe un libro con el titulo ingresado
+            String consulta = "SELECT * FROM Titulos "
+                            + "WHERE Titulo = " + "'"+titulo+"'";
+            
+            //ResultSet resultado = sql.executeQuery(consulta);
+                    //si ya existe titulo error else insert en TBALA
+            
+            if(resultado!=null){
+                try{
+                    //Connection con = Conexion.getConnection();
+                    PreparedStatement ps = con.prepareStatement("INSERT INTO Titulos (IdTitulo,Titulo) VALUES (?,?)");
+                    
+                    //sIdTitulo=SELECT MAX(IdTitulo) FROM Titulos;
+                    
+                    String consultaMax = "SELECT MAX(IdTitulo) FROM Titulos";
+                    resultado = sql.executeQuery(consultaMax);
+                    
+                    
+                    int val =  ((Number) resultado.getObject(1)).intValue();
+                    val++;
+                    ps.setInt(1, val);
+                    ps.setString(2, titulo);
+                    ps.executeUpdate();
+                    JOptionPane.showMessageDialog(null, "Registro añadido exitosamente");
+                    limpiar();
+
+                }catch(SQLException ex){
+                    JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+                }
+                
+                while(resultado.next()){
+                    salida+=resultado.getString(1) + "\n";   
+                }
+                JOptionPane.showMessageDialog(null, salida);
+            }else{
+                JOptionPane.showMessageDialog(null, "Error el libro con el titulo " + titulo +" ya existe.");
+            }
+        
+        
+        */
+    }//GEN-LAST:event_btnAñadirActionPerformed
+
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Text10;
@@ -142,15 +280,15 @@ public class upLibros extends javax.swing.JPanel {
     private javax.swing.JLabel Text8;
     private javax.swing.JLabel Text9;
     private javax.swing.JLabel Title;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton btnAñadir;
+    private javax.swing.JButton btnVolver;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
+    private javax.swing.JTextField txtAutor;
+    private javax.swing.JTextField txtAño;
+    private javax.swing.JTextField txtCategoria;
+    private javax.swing.JTextField txtEdicion;
+    private javax.swing.JTextField txtEjemplares;
+    private javax.swing.JTextField txtTitulo;
     // End of variables declaration//GEN-END:variables
 }
