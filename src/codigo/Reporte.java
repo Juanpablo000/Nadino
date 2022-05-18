@@ -4,6 +4,10 @@
  */
 package codigo;
 
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author juanp
@@ -15,6 +19,7 @@ public class Reporte extends javax.swing.JPanel {
      */
     public Reporte() {
         initComponents();
+        cargarTabla();
     }
 
     /**
@@ -29,8 +34,7 @@ public class Reporte extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         Title = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
+        tblReporte = new javax.swing.JTable();
 
         setMaximumSize(new java.awt.Dimension(640, 390));
         setMinimumSize(new java.awt.Dimension(640, 390));
@@ -43,22 +47,22 @@ public class Reporte extends javax.swing.JPanel {
         Title.setText("Reportes");
         jPanel1.add(Title, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 20, -1, -1));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        tblReporte.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Id Usuario", "Id Libro", "Fecha prestamo", "Fecha entrega"
+                "Nombre", "Titulo", "Edicion", "Fecha devolución", "Devolvio tiempo"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -69,42 +73,63 @@ public class Reporte extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-            jTable2.getColumnModel().getColumn(1).setResizable(false);
-            jTable2.getColumnModel().getColumn(2).setResizable(false);
-            jTable2.getColumnModel().getColumn(3).setResizable(false);
+        jScrollPane2.setViewportView(tblReporte);
+        if (tblReporte.getColumnModel().getColumnCount() > 0) {
+            tblReporte.getColumnModel().getColumn(0).setResizable(false);
+            tblReporte.getColumnModel().getColumn(1).setResizable(false);
+            tblReporte.getColumnModel().getColumn(2).setResizable(false);
+            tblReporte.getColumnModel().getColumn(3).setResizable(false);
+            tblReporte.getColumnModel().getColumn(4).setResizable(false);
         }
 
-        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 580, 200));
-
-        jButton2.setBackground(new java.awt.Color(54, 33, 89));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Actualizar");
-        jButton2.setBorderPainted(false);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 310, 90, 40));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 630, 200));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 760, 420));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
+    private void cargarTabla(){
+        DefaultTableModel modeloTabla = (DefaultTableModel)tblReporte.getModel();
+        modeloTabla.setRowCount(0);
+        PreparedStatement ps;
+        ResultSet rs;
+        ResultSetMetaData rsmd;
+        int columnas;
+        
+        int[] anchos = {90,90,5,10,30,10,15,10};
+        for(int i=0; i<tblReporte.getColumnCount();i++){
+            tblReporte.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+        }
+        
+        try{
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT (PrimerNombre +' '+ SegundoNombre +' '+ PrimerApellido +' '+ SegundoApellido) as Nombre_Completo,Titulo, Edicion, FechaDevolucion, DevolvioTiempo\n" +
+                                    "FROM Devoluciones d\n" +
+                                    "INNER JOIN Usuarios u ON u.IdUsuario = d.IdUsuario\n" +
+                                    "INNER JOIN Libros l ON l.IdLibro = d.IdLibro\n" +
+                                    "INNER JOIN Titulos t ON l.IdTitulo = t.IdTitulo");
+            
+            rs = ps.executeQuery();
+            rsmd = rs.getMetaData();
+            columnas = rsmd.getColumnCount();
+            
+            while(rs.next()){
+                Object[] fila = new Object[columnas];
+                for(int indice = 0; indice <columnas; indice++){
+                    fila[indice] = rs.getObject(indice +1);
+                }
+                modeloTabla.addRow(fila);
+                
+            }
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Title;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JTable tblReporte;
     // End of variables declaration//GEN-END:variables
 }

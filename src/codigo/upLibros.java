@@ -15,11 +15,26 @@ import javax.swing.JOptionPane;
  */
 public class upLibros extends javax.swing.JPanel {
 
-    /**
-     * Creates new form upLibros
-     */
+    int idus;
+    boolean edit;
+    
     public upLibros() {
         initComponents();
+    }
+    
+    public upLibros(int l_idLibro, String l_titulo, String l_autor, int l_año, String l_categoria, String l_edicion, String l_ejemplares) {
+        initComponents();
+        idus = l_idLibro;
+        txtTitulo.setText(l_titulo);
+        txtAutor.setText(l_autor);
+        jyear.setYear(l_año);
+        txtEdicion.setText(l_edicion);
+        txtCategoria.setText(l_categoria);
+        txtEjemplares.setText(l_ejemplares);
+        
+        edit = true;
+        Title.setText("Modificar Libro");
+        btnAñadir.setText("Guardar");
     }
 
     /**
@@ -43,11 +58,12 @@ public class upLibros extends javax.swing.JPanel {
         txtEjemplares = new javax.swing.JTextField();
         txtTitulo = new javax.swing.JTextField();
         txtAutor = new javax.swing.JTextField();
-        txtAño = new javax.swing.JTextField();
         txtCategoria = new javax.swing.JTextField();
         txtEdicion = new javax.swing.JTextField();
         btnVolver = new javax.swing.JButton();
         btnAñadir = new javax.swing.JButton();
+        JP_year = new javax.swing.JPanel();
+        jyear = new com.toedter.calendar.JYearChooser();
 
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -88,7 +104,6 @@ public class upLibros extends javax.swing.JPanel {
         jPanel1.add(txtEjemplares, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 200, 240, -1));
         jPanel1.add(txtTitulo, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 240, -1));
         jPanel1.add(txtAutor, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 130, 240, -1));
-        jPanel1.add(txtAño, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 200, 240, -1));
         jPanel1.add(txtCategoria, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 140, 240, -1));
         jPanel1.add(txtEdicion, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 80, 240, -1));
 
@@ -117,6 +132,10 @@ public class upLibros extends javax.swing.JPanel {
             }
         });
         jPanel1.add(btnAñadir, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 310, 90, 40));
+        jPanel1.add(JP_year, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 290, 110, 30));
+
+        jyear.setDayChooser(null);
+        jPanel1.add(jyear, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, 240, -1));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 450));
     }// </editor-fold>//GEN-END:initComponents
@@ -136,143 +155,119 @@ public class upLibros extends javax.swing.JPanel {
     private void limpiar(){
         txtTitulo.setText("");
         txtAutor.setText("");
-        txtAño.setText("");
-        txtAño.setText("");        
+        txtEdicion.setText("");
         txtCategoria.setText("");
         txtEjemplares.setText("");
     }
     
+          
     
-     /*
-        String salida="";
-        try{
-            Statement sql = Conexion.getConnection().createStatement();
-            String consulta = "SELECT name FROM master.dbo.sysdatabases";
-        
-            ResultSet resultado = sql.executeQuery(consulta);
-        
-            while(resultado.next()){
-                 salida+=resultado.getString(1) + "\n";   
-            }
-            JOptionPane.showMessageDialog(null, salida);
-        catch(){
-        
-        }
-        */
     
     private void btnAñadirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAñadirActionPerformed
         Connection con = null;
         PreparedStatement prSt = null;
+        String query;
+
+        String titulo = txtTitulo.getText();
+        String autor = txtAutor.getText();
+        String categoria = txtCategoria.getText();
+        int year = jyear.getYear();
+        short edicion = Short.parseShort(txtEdicion.getText());
+        short ejemplares = Short.parseShort(txtEjemplares.getText());
+       
+        int idTitulo = verificar(titulo,"Titulos","Titulo");
+        int idAutor = verificar(autor,"Autores","Autor");
+        int idCategoria = verificar(categoria,"Categorias","Categoria");
+        
+        if(!edit){
+            //nuevo libro
+            try{
+                con = Conexion.getConnection();
+                query = "INSERT INTO Libros (IdTitulo,IdAutor,Año,IdCategoria, Edicion, Ejemplares, Disponibles) VALUES (?,?,?,?,?,?,?)";
+                prSt = con.prepareStatement(query);
+                prSt.setInt(1, idTitulo);
+                prSt.setInt(2, idAutor);
+                prSt.setInt(3, year);
+                prSt.setInt(4,idCategoria);
+                prSt.setShort(5, edicion);
+                prSt.setShort(6, ejemplares);
+                prSt.setShort(7, ejemplares);
+                prSt.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Libro añadido exitosamente");
+                limpiar();
+
+            }catch(SQLException ex){
+                JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+            }
+        }else{
+            //editar usuario
+            try{ 
+                con = Conexion.getConnection();
+                query = "UPDATE Libros SET IdTitulo = '" + idTitulo +"' , IdAutor= '" + idAutor +"', Año = '" + year +"' , IdCategoria= '" + idCategoria +"', Edicion = '" + edicion +"' , Ejemplares= '" + ejemplares +"'"
+                        + "WHERE IdLibro = ?";
+                prSt = con.prepareStatement(query);
+                prSt.setInt(1, idus);
+                prSt.executeUpdate();
+                javax.swing.JOptionPane.showMessageDialog(this, "¡Libro editado! \n", "HECHO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                
+                Libros p1 = new Libros();
+                p1.setSize(750, 430);
+                p1.setLocation(0,0);
+
+                JP_content.removeAll();
+                JP_content.add(p1, BorderLayout.CENTER);
+                JP_content.revalidate();
+                JP_content.repaint();  
+            }catch(SQLException ex){
+                JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+            }
+        } 
+  
+    }//GEN-LAST:event_btnAñadirActionPerformed
+    
+    private int verificar(String variable, String nombreTabla, String nombreCampo){
+        Connection con = null;
+        PreparedStatement prSt = null;
         ResultSet rs = null;
-       
-        String salida="";
-       
+        boolean resultado = false;
+        int id=-1;
+        
         try{
-            String titulo = txtTitulo.getText(); //IdTitulo
-            
-            /*
-            String autor = txtAutor.getText(); //IdAutor
-            int año = Integer.parseInt(txtAño.getText());
-            short edicion = Short.parseShort(txtEdicion.getText());
-            String categoria = txtCategoria.getText();//IdCategoria
-            short ejemplares = Short.parseShort(txtEjemplares.getText());
-            */
-            
             con = Conexion.getConnection();
-            String query = "SELECT * FROM Titulos WHERE Titulo = ?";
+            String query = "SELECT * FROM "+ nombreTabla+ " WHERE "+ nombreCampo+ " = ?";
             prSt = con.prepareStatement(query);
-            prSt.setString(1, titulo);
+            prSt.setString(1, variable);
             rs = prSt.executeQuery();
             while(rs.next()){
-                JOptionPane.showMessageDialog(null, rs.getString("Titulo"));
+                //JOptionPane.showMessageDialog(null, rs.getString(1));
+                id = rs.getInt(1);
+                resultado= true;
+                break;
             }
-            rs.close();
-           
-            
-        }catch(SQLException ex){
-            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
-        }
-        
-        /*
-        String titulo = txtTitulo.getText(); //IdTitulo
-        String autor = txtAutor.getText(); //IdAutor
-        int año = Integer.parseInt(txtAño.getText());
-        short edicion = Short.parseShort(txtEdicion.getText());
-        String categoria = txtCategoria.getText();//IdCategoria
-        short ejemplares = Short.parseShort(txtEjemplares.getText());
-        
-        try{
-            Connection con = Conexion.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO Libros (IdTitulo,IdAutor,Año,IdCategoria, Edicion, Ejemplares, Disponibles) VALUES (?,?,?,?,?,?,?)");
-            ps.setString(1, titulo);
-            ps.setString(2, autor);
-            ps.setInt(3, año);
-            ps.setShort(4, edicion);
-            ps.setString(5, categoria);
-            ps.setShort(6, ejemplares);
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Registro añadido exitosamente");
-            
-        }catch(SQLException ex){
-            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
-        }
-        */
-        
-        
-        
-        /*
-        
 
-
-            
-            Statement sql = Conexion.getConnection().createStatement();
-            
-            //Busco si existe un libro con el titulo ingresado
-            String consulta = "SELECT * FROM Titulos "
-                            + "WHERE Titulo = " + "'"+titulo+"'";
-            
-            //ResultSet resultado = sql.executeQuery(consulta);
-                    //si ya existe titulo error else insert en TBALA
-            
-            if(resultado!=null){
-                try{
-                    //Connection con = Conexion.getConnection();
-                    PreparedStatement ps = con.prepareStatement("INSERT INTO Titulos (IdTitulo,Titulo) VALUES (?,?)");
-                    
-                    //sIdTitulo=SELECT MAX(IdTitulo) FROM Titulos;
-                    
-                    String consultaMax = "SELECT MAX(IdTitulo) FROM Titulos";
-                    resultado = sql.executeQuery(consultaMax);
-                    
-                    
-                    int val =  ((Number) resultado.getObject(1)).intValue();
-                    val++;
-                    ps.setInt(1, val);
-                    ps.setString(2, titulo);
-                    ps.executeUpdate();
-                    JOptionPane.showMessageDialog(null, "Registro añadido exitosamente");
-                    limpiar();
-
-                }catch(SQLException ex){
-                    JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
-                }
+            if(!resultado){
+                query = "INSERT INTO "+ nombreTabla+ " ("+ nombreCampo+") VALUES (?)";
+                prSt = con.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+                prSt.setString(1, variable);
+                prSt.executeUpdate();
                 
-                while(resultado.next()){
-                    salida+=resultado.getString(1) + "\n";   
+                ResultSet generatedKeys = prSt.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                   id=generatedKeys.getInt(1);
                 }
-                JOptionPane.showMessageDialog(null, salida);
-            }else{
-                JOptionPane.showMessageDialog(null, "Error el libro con el titulo " + titulo +" ya existe.");
             }
+            //rs.close();
         
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
         
-        */
-    }//GEN-LAST:event_btnAñadirActionPerformed
-
-    
-    
+        return id;
+    }
+   
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel JP_year;
     private javax.swing.JLabel Text10;
     private javax.swing.JLabel Text14;
     private javax.swing.JLabel Text6;
@@ -284,8 +279,8 @@ public class upLibros extends javax.swing.JPanel {
     private javax.swing.JButton btnVolver;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator3;
+    private com.toedter.calendar.JYearChooser jyear;
     private javax.swing.JTextField txtAutor;
-    private javax.swing.JTextField txtAño;
     private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtEdicion;
     private javax.swing.JTextField txtEjemplares;

@@ -4,17 +4,35 @@
  */
 package codigo;
 
+import java.awt.event.ItemEvent;
+import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author juanp
  */
 public class Devoluciones extends javax.swing.JPanel {
 
-    /**
-     * Creates new form Devoluciones
-     */
+    Conexion conn;
+    Connection reg;
+    int ID_usuario =-1;
+    int ID_libro =-1;
+    
     public Devoluciones() {
         initComponents();
+        conn = new Conexion();
+        reg = Conexion.getConnection();
+        cargarLibrosUsuarios();
+        //cargarLibrosTitulos();
+        //cargarPrestamos();
     }
 
     /**
@@ -30,12 +48,12 @@ public class Devoluciones extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         Title = new javax.swing.JLabel();
         Text2 = new javax.swing.JLabel();
-        idUsuario = new javax.swing.JTextField();
-        IdLibro = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnDevolver = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jSeparator3 = new javax.swing.JSeparator();
         Text3 = new javax.swing.JLabel();
+        cmbUsuario = new javax.swing.JComboBox<>();
+        cmbLibro = new javax.swing.JComboBox<>();
 
         setMaximumSize(new java.awt.Dimension(640, 390));
         setPreferredSize(new java.awt.Dimension(640, 390));
@@ -48,40 +66,21 @@ public class Devoluciones extends javax.swing.JPanel {
         jPanel1.add(Title, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 30, -1, -1));
 
         Text2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        Text2.setText("Id Usuario");
+        Text2.setText("Nombre del usuario");
         jPanel1.add(Text2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 90, -1, -1));
 
-        idUsuario.setForeground(new java.awt.Color(102, 102, 102));
-        idUsuario.setText("Ingrese el id del usuario");
-        idUsuario.setBorder(null);
-        idUsuario.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                idUsuarioMousePressed(evt);
-            }
-        });
-        jPanel1.add(idUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 120, 260, 30));
-
-        IdLibro.setForeground(new java.awt.Color(102, 102, 102));
-        IdLibro.setText("Ingrese el id del Libro a devolver");
-        IdLibro.setBorder(null);
-        IdLibro.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                IdLibroMousePressed(evt);
-            }
-        });
-        IdLibro.addActionListener(new java.awt.event.ActionListener() {
+        btnDevolver.setBackground(new java.awt.Color(54, 33, 89));
+        btnDevolver.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnDevolver.setForeground(new java.awt.Color(255, 255, 255));
+        btnDevolver.setText("Devolver");
+        btnDevolver.setBorderPainted(false);
+        btnDevolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDevolver.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                IdLibroActionPerformed(evt);
+                btnDevolverActionPerformed(evt);
             }
         });
-        jPanel1.add(IdLibro, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, 260, 30));
-
-        jButton1.setBackground(new java.awt.Color(54, 33, 89));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Devolver");
-        jButton1.setBorderPainted(false);
-        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 90, 40));
+        jPanel1.add(btnDevolver, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 270, 90, 40));
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/libros-removebg.png"))); // NOI18N
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 30, 270, 280));
@@ -92,41 +91,284 @@ public class Devoluciones extends javax.swing.JPanel {
         jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 10, 10, 350));
 
         Text3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        Text3.setText("Libro ID");
+        Text3.setText("Titulo y edición del libro");
         jPanel1.add(Text3, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 170, -1, -1));
+
+        cmbUsuario.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cmbUsuarioItemStateChanged(evt);
+            }
+        });
+        cmbUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbUsuarioActionPerformed(evt);
+            }
+        });
+        jPanel1.add(cmbUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 120, 240, 30));
+
+        jPanel1.add(cmbLibro, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, 240, 30));
 
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 660, 420));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void idUsuarioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_idUsuarioMousePressed
-        if(idUsuario.getText().equals("Ingrese el id del usuario"))
-        idUsuario.setText("");
-        if(IdLibro.getText().equals("") || IdLibro.getText() == null || IdLibro.getText().equals(" "))
-        IdLibro.setText("Ingrese el id del Libro a devolver");
-    }//GEN-LAST:event_idUsuarioMousePressed
-
-    private void IdLibroMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_IdLibroMousePressed
-        if(IdLibro.getText().equals("Ingrese el id del Libro a devolver"))
-        IdLibro.setText("");
-        if(idUsuario.getText().equals("") || idUsuario.getText() == null || idUsuario.getText().equals(" "))
-        idUsuario.setText("Ingrese el id del usuario");
-    }//GEN-LAST:event_IdLibroMousePressed
-
-    private void IdLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_IdLibroActionPerformed
+    private void cmbUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbUsuarioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_IdLibroActionPerformed
+    }//GEN-LAST:event_cmbUsuarioActionPerformed
 
+    private void obtenerID_libro(){
+        
+        Connection con = null;
+        PreparedStatement prSt = null;
+        ResultSet rs = null;
+        
+        try{
+            String nom_libro =  cmbLibro.getSelectedItem().toString();//id libro
+            
+             //Obtiene ID del Libro
+            String vectorLibro = nom_libro;
+            String[] partesLibro = null;
+            String[] partesEdicion = null;
+            
+            partesLibro = vectorLibro.split("/");
+            
+            String tmp = partesLibro[1];
+            partesEdicion = tmp.split(" ");
+            
+            con = Conexion.getConnection();
+            String query = "SELECT IdLibro\n" +
+                    "FROM Libros lb\n" +
+                    "INNER JOIN Titulos t ON lb.IdTitulo = t.IdTitulo\n" +
+                    "WHERE t.Titulo = ? and Edicion = ?";
+            prSt = con.prepareStatement(query);
+            prSt.setString(1, partesLibro[0]);
+            prSt.setString(2, partesEdicion[2]);
+            
+            rs = prSt.executeQuery();
+           
+            while(rs.next()){
+                ID_libro = rs.getInt(1);
+                break;
+            }
+            
+          }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+          }
+    }
+    
+     private static String formato(Date date){
+        SimpleDateFormat formateador = new SimpleDateFormat("dd-MM-yyyy");
+        String fecha = formateador.format(date);
+        return fecha;
+    }
+    
+    
+    private void btnDevolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDevolverActionPerformed
+        //fecha retorno - fecha de prestamo
+        int dias = -1, salida_tiempo=-1, ID_prestamo=-1;
+        
+        try{
+            String f_dev = "";
+            obtenerID_libro();
+            PreparedStatement ps;
+            ResultSet rs;
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT * FROM Prestamos\n" +
+                                            "WHERE IdLibro = '"+ID_libro+"' AND IdUsuario = '"+ID_usuario+"'");
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                ID_prestamo=rs.getInt("IdPrestamo");
+                
+                Date ahora = new Date();//fecha de entrega
+                f_dev = formato(ahora);
+                Date fechaOriginalDevolucion = deStringToDate(rs.getString("FechaFin"));
+                dias = diferenciasDeFechas(ahora, fechaOriginalDevolucion);
+                
+                if(dias>0){
+                    salida_tiempo=1;
+                }else if(dias==0){
+                    salida_tiempo=0;
+                }
+                
+            }
+            
+            Statement stm = reg.createStatement();
+            stm.executeUpdate("DELETE FROM Prestamos WHERE IdLibro = '"+ ID_libro +"' AND IdUsuario = '"+ ID_usuario +"'");
+            stm.executeUpdate("UPDATE Libros SET Disponibles = Disponibles+1 WHERE IdLibro = '"+ ID_libro +"'");
+            
+            //stm.executeUpdate("INSERT INTO Devoluciones (IdUsuario, IdLibro, FechaDevolucion, DevolvioTiempo) VALUES ('"+ID_usuario+"', '"+ ID_libro +"', '"+ f_dev +"', '"+salida_tiempo+"')");
+            
+            //int id_devolucion=-1;
+            String query = "INSERT INTO Devoluciones (IdUsuario, IdLibro, FechaDevolucion, DevolvioTiempo) VALUES (?,?,?,?)";
+            ps = con.prepareStatement(query,Statement.RETURN_GENERATED_KEYS);
+            ps.setInt(1, ID_usuario);
+            ps.setInt(2, ID_libro);
+            ps.setString(3, f_dev);
+            ps.setInt(4, salida_tiempo);
+            ps.executeUpdate();
+
+            /*
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+               id_devolucion=generatedKeys.getInt(1);
+            }
+            */
+
+            //stm.executeUpdate("INSERT INTO Reportes (IdDevolucion, IdPrestamo) VALUES ('"+id_devolucion+"', '"+ ID_prestamo +"')");
+               
+          }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+          } catch (ParseException ex) {
+            Logger.getLogger(Devoluciones.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }//GEN-LAST:event_btnDevolverActionPerformed
+
+    private void cmbUsuarioItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cmbUsuarioItemStateChanged
+        
+        int id_usuario=-1;
+        String nombreUsuario = (String) this.cmbUsuario.getSelectedItem();
+        
+        try{
+            PreparedStatement ps;
+            ResultSet rs;
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT u.IdUsuario\n" +
+                                     "FROM Prestamos p\n" +
+                                     "INNER JOIN Usuarios u ON u.IdUsuario = p.IdUsuario\n" +
+                                     "where (PrimerNombre +' '+ SegundoNombre +' '+ PrimerApellido +' '+ SegundoApellido) = '" + nombreUsuario + "'");
+            rs = ps.executeQuery();
+
+            cmbLibro.removeAllItems();
+            while(rs.next()){
+                id_usuario=rs.getInt(1);
+            }
+            
+            ps = con.prepareStatement("SELECT l.IdLibro, Titulo, Edicion\n" +
+                                     "FROM Prestamos p\n" +
+                                     "INNER JOIN Libros l ON l.IdLibro = p.IdLibro\n" +
+                                     "INNER JOIN Titulos t ON l.IdTitulo = t.IdTitulo\n" +
+                                     "WHERE IdUsuario = '" + id_usuario + "' ");
+            rs = ps.executeQuery();
+            while(rs.next()){
+                String salida = rs.getString("Titulo") +" / Ed: " + rs.getString("Edicion");
+                this.cmbLibro.addItem(salida);
+            }
+            
+            ID_usuario=id_usuario;
+            
+          }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+          }
+    }//GEN-LAST:event_cmbUsuarioItemStateChanged
+
+    private void cargarLibrosUsuarios(){
+        try{
+            PreparedStatement ps;
+            ResultSet rs;
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT (PrimerNombre +' '+ SegundoNombre +' '+ PrimerApellido +' '+ SegundoApellido) as Nombre_Completo\n" +
+                                      "FROM Prestamos p\n" +
+                                      "INNER JOIN Usuarios u ON u.IdUsuario = p.IdUsuario");
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                String salida = rs.getString(1);
+                cmbUsuario.addItem(salida);
+            }
+            
+          }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+          }
+    }
+    
+    private void cargarLibrosTitulos(){
+        try{
+            PreparedStatement ps;
+            ResultSet rs;
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT Titulo, Edicion\n" +
+                                      "FROM Prestamos p\n" +
+                                      "INNER JOIN Libros l ON l.IdLibro = p.IdLibro\n" +
+                                      "INNER JOIN Titulos t ON l.IdTitulo = t.IdTitulo");
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                String salida = rs.getString("Titulo") +" / Ed: " + rs.getString("Edicion");
+                cmbLibro.addItem(salida);
+            }
+            
+          }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+          }
+    }
+    
+    
+     private void cargarPrestamos(){
+        try{
+            PreparedStatement ps;
+            ResultSet rs;
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT (PrimerNombre +' '+ SegundoNombre +' '+ PrimerApellido +' '+ SegundoApellido) as Nombre_Completo,Titulo, Edicion\n" +
+                                      "FROM Prestamos p\n" +
+                                      "INNER JOIN Usuarios u ON u.IdUsuario = p.IdUsuario\n" +
+                                      "INNER JOIN Libros l ON l.IdLibro = p.IdLibro\n" +
+                                      "INNER JOIN Titulos t ON l.IdTitulo = t.IdTitulo");
+            rs = ps.executeQuery();
+
+            while(rs.next()){
+                String salida = rs.getString("Titulo") +" / Ed: " + rs.getString("Edicion");
+                cmbLibro.addItem(salida);
+                cmbUsuario.addItem(rs.getString(1));
+            }
+            
+          }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+          }
+    }
+    
+    private static synchronized int diferenciasDeFechas(Date fechaInicial, Date fechaFinal) throws ParseException{
+        DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
+        String fechaInicioString = df.format(fechaInicial);
+        try {
+            fechaInicial = df.parse(fechaInicioString);
+        } catch (ParseException ex) {
+        }
+
+        String fechaFinalString = df.format(fechaFinal);
+        fechaFinal = df.parse(fechaFinalString);
+
+        long fechaInicialMs = fechaInicial.getTime();
+        long fechaFinalMs = fechaFinal.getTime();
+        long diferencia = fechaFinalMs - fechaInicialMs;
+        double dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+        return ((int) dias);
+    }
+    
+     public static synchronized java.util.Date deStringToDate(String fecha) {
+        SimpleDateFormat formatoDelTexto = new SimpleDateFormat("dd-MM-yyyy");
+        Date fechaEnviar = null;
+        try {
+            fechaEnviar = formatoDelTexto.parse(fecha);
+            return fechaEnviar;
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+     
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField IdLibro;
     private javax.swing.JLabel Text2;
     private javax.swing.JLabel Text3;
     private javax.swing.JLabel Title;
+    private javax.swing.JButton btnDevolver;
     private javax.swing.ButtonGroup buttonGroup1;
-    private javax.swing.JTextField idUsuario;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> cmbLibro;
+    private javax.swing.JComboBox<String> cmbUsuario;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator3;
     // End of variables declaration//GEN-END:variables
+
 }

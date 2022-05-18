@@ -22,23 +22,18 @@ public class upUsers extends javax.swing.JPanel {
         edit = false;
     }
     
-    public upUsers(int u_idUsuario, String u_PrimerNombre, String u_SegundoNombre, String u_PrimerApellido, String u_SegundoApellido, String u_Direccion, int u_telefono) {
+    public upUsers(int u_idUsuario, String u_PrimerNombre, String u_SegundoNombre, String u_PrimerApellido, String u_SegundoApellido, String u_Direccion, String u_telefono) {
         initComponents();
-        
-        //conn = new Connect();
-        //reg = conn.getConnection();
-        /*
-        String nTel;
-        nTel= u_telefono.toString();
         idus = u_idUsuario;
         txtPrimerNombre.setText(u_PrimerNombre);
         txtSegundoNombre.setText(u_SegundoNombre);
         txtPrimerApellido.setText(u_PrimerApellido);
         txtSegundoApellido.setText(u_SegundoApellido);
         txtDomicilio.setText(u_Direccion);
-        txtTelefono.setText();
+        txtTelefono.setText(u_telefono);
         edit = true;
-        */
+        Title.setText("Modificar usuario");
+        btnRegistrar.setText("Guardar");
     }
 
     /**
@@ -199,22 +194,47 @@ public class upUsers extends javax.swing.JPanel {
         String Direccion = txtDomicilio.getText(); 
         int Telefono = Integer.parseInt(txtTelefono.getText());
         
-        try{
-            Connection con = Conexion.getConnection();
-            PreparedStatement ps = con.prepareStatement("INSERT INTO Usuarios (PrimerNombre,SegundoNombre,PrimerApellido, SegundoApellido, Direccion, Telefono, DevolucionesExtratemporales) VALUES (?,?,?,?,?,?,?)");
-            ps.setString(1, primerNombre);
-            ps.setString(2, segundoNombre);
-            ps.setString(3, primerApellido);
-            ps.setString(4, segundoApellido);
-            ps.setString(5, Direccion);
-            ps.setInt(6, Telefono);
-            ps.setShort(7, (short)0);
-            ps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "Usuario añadido exitosamente");
-            limpiar();
-        }catch(SQLException ex){
-            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        if(!edit){
+            //nuevo usuario
+            try{
+                Connection con = Conexion.getConnection();
+                PreparedStatement ps = con.prepareStatement("INSERT INTO Usuarios (PrimerNombre,SegundoNombre,PrimerApellido, SegundoApellido, Direccion, Telefono, DevolucionesExtratemporales) VALUES (?,?,?,?,?,?,?)");
+                ps.setString(1, primerNombre);
+                ps.setString(2, segundoNombre);
+                ps.setString(3, primerApellido);
+                ps.setString(4, segundoApellido);
+                ps.setString(5, Direccion);
+                ps.setInt(6, Telefono);
+                ps.setShort(7, (short)0);
+                ps.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Usuario añadido exitosamente");
+                limpiar();
+            }catch(SQLException ex){
+                JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+            }
+        }else{
+            //editar usuario
+            try{               
+                Connection reg = Conexion.getConnection();
+                Statement stm = reg.createStatement();
+                stm.executeUpdate("UPDATE Usuarios SET PrimerNombre = '" + primerNombre +"' , SegundoNombre= '" + segundoNombre +"', PrimerApellido = '" + primerApellido +"' , SegundoApellido= '" + segundoApellido +"', Direccion = '" + Direccion +"' , Telefono= '" + Telefono +"'"
+                        + "WHERE idUsuario = "+idus);
+                javax.swing.JOptionPane.showMessageDialog(this, "¡Usuario editado! \n", "HECHO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                
+                Usuarios p1 = new Usuarios();
+                p1.setSize(750, 430);
+                p1.setLocation(0,0);
+
+                JP_content.removeAll();
+                JP_content.add(p1, BorderLayout.CENTER);
+                JP_content.revalidate();
+                JP_content.repaint();  
+            }catch(SQLException ex){
+                JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+            }
+            
         }
+        
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void limpiar(){

@@ -5,6 +5,9 @@
 package codigo;
 import static codigo.Home.JP_content;
 import java.awt.BorderLayout;
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author juanp
@@ -16,6 +19,7 @@ public class Libros extends javax.swing.JPanel {
      */
     public Libros() {
         initComponents();
+        cargarTabla();
     }
 
     /**
@@ -29,12 +33,12 @@ public class Libros extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         Title = new javax.swing.JLabel();
-        bid = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
+        jtxtLibro = new javax.swing.JTextField();
+        btnBuscar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblLibros = new javax.swing.JTable();
+        tablaLibros = new javax.swing.JTable();
         jB_Eliminar = new javax.swing.JButton();
-        btnActualizar = new javax.swing.JButton();
+        btnEditar = new javax.swing.JButton();
         btnNuevo = new javax.swing.JButton();
 
         setMinimumSize(new java.awt.Dimension(750, 430));
@@ -48,31 +52,36 @@ public class Libros extends javax.swing.JPanel {
         Title.setText("Libros");
         jPanel1.add(Title, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
-        bid.setForeground(new java.awt.Color(102, 102, 102));
-        bid.setText("Ingrese el titulo del Libro a buscar");
-        bid.setBorder(null);
-        bid.addMouseListener(new java.awt.event.MouseAdapter() {
+        jtxtLibro.setForeground(new java.awt.Color(102, 102, 102));
+        jtxtLibro.setText("Ingrese el titulo del Libro a buscar");
+        jtxtLibro.setBorder(null);
+        jtxtLibro.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                bidMousePressed(evt);
+                jtxtLibroMousePressed(evt);
             }
         });
-        bid.addActionListener(new java.awt.event.ActionListener() {
+        jtxtLibro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bidActionPerformed(evt);
+                jtxtLibroActionPerformed(evt);
             }
         });
-        jPanel1.add(bid, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 570, 30));
+        jPanel1.add(jtxtLibro, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 570, 30));
 
-        jButton2.setBackground(new java.awt.Color(54, 33, 89));
-        jButton2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("Buscar");
-        jButton2.setBorderPainted(false);
-        jButton2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jButton2.setDefaultCapable(false);
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 50, -1, 30));
+        btnBuscar.setBackground(new java.awt.Color(54, 33, 89));
+        btnBuscar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
+        btnBuscar.setText("Buscar");
+        btnBuscar.setBorderPainted(false);
+        btnBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnBuscar.setDefaultCapable(false);
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 50, -1, 30));
 
-        tblLibros.setModel(new javax.swing.table.DefaultTableModel(
+        tablaLibros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -95,16 +104,16 @@ public class Libros extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tblLibros);
-        if (tblLibros.getColumnModel().getColumnCount() > 0) {
-            tblLibros.getColumnModel().getColumn(0).setResizable(false);
-            tblLibros.getColumnModel().getColumn(1).setResizable(false);
-            tblLibros.getColumnModel().getColumn(2).setResizable(false);
-            tblLibros.getColumnModel().getColumn(3).setResizable(false);
-            tblLibros.getColumnModel().getColumn(4).setResizable(false);
-            tblLibros.getColumnModel().getColumn(5).setResizable(false);
-            tblLibros.getColumnModel().getColumn(6).setResizable(false);
-            tblLibros.getColumnModel().getColumn(7).setResizable(false);
+        jScrollPane1.setViewportView(tablaLibros);
+        if (tablaLibros.getColumnModel().getColumnCount() > 0) {
+            tablaLibros.getColumnModel().getColumn(0).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(1).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(2).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(3).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(4).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(5).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(6).setResizable(false);
+            tablaLibros.getColumnModel().getColumn(7).setResizable(false);
         }
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, 650, 240));
@@ -121,17 +130,17 @@ public class Libros extends javax.swing.JPanel {
         });
         jPanel1.add(jB_Eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 340, -1, 40));
 
-        btnActualizar.setBackground(new java.awt.Color(54, 33, 89));
-        btnActualizar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        btnActualizar.setForeground(new java.awt.Color(255, 255, 255));
-        btnActualizar.setText("Actualizar");
-        btnActualizar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        btnActualizar.addActionListener(new java.awt.event.ActionListener() {
+        btnEditar.setBackground(new java.awt.Color(54, 33, 89));
+        btnEditar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnEditar.setForeground(new java.awt.Color(255, 255, 255));
+        btnEditar.setText("Editar");
+        btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnActualizarActionPerformed(evt);
+                btnEditarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnActualizar, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 340, 100, 40));
+        jPanel1.add(btnEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 340, 100, 40));
 
         btnNuevo.setBackground(new java.awt.Color(54, 33, 89));
         btnNuevo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -148,10 +157,10 @@ public class Libros extends javax.swing.JPanel {
         add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 410));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void bidMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bidMousePressed
-        if(bid.getText().equals("Ingrese el titulo del Libro a buscar"))
-        bid.setText("");
-    }//GEN-LAST:event_bidMousePressed
+    private void jtxtLibroMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jtxtLibroMousePressed
+        if(jtxtLibro.getText().equals("Ingrese el titulo del Libro a buscar"))
+        jtxtLibro.setText("");
+    }//GEN-LAST:event_jtxtLibroMousePressed
 
     private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
         // Abrir sección
@@ -165,28 +174,164 @@ public class Libros extends javax.swing.JPanel {
         JP_content.repaint();
     }//GEN-LAST:event_btnNuevoActionPerformed
 
-    private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnActualizarActionPerformed
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        try{
+            //obtiene el id de la celda selccionada del Jtable [0,1,2,3,4,.....]
+            int row = tablaLibros.getSelectedRow();
+            if(row <= -1){
+                javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar el libro a editar. \n", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                int column = 0;
+                int valorID = Integer.parseInt(tablaLibros.getModel().getValueAt(row, column).toString());
+                
+                if(valorID <= 0){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar el libro a editar. \n", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
+                else{
+                    String titulo=tablaLibros.getModel().getValueAt(row,1).toString();
+                    String autor=tablaLibros.getModel().getValueAt(row,2).toString();
+                    int year =Integer.parseInt(tablaLibros.getModel().getValueAt(row,3).toString());
+                    String categoria =tablaLibros.getModel().getValueAt(row,4).toString();
+                    String edicion =tablaLibros.getModel().getValueAt(row,5).toString();
+                    String ejemplares =tablaLibros.getModel().getValueAt(row,6).toString();
+                    upLibros p1 = new upLibros(valorID, titulo, autor, year, categoria, edicion,ejemplares);
+                    p1.setSize(750, 430);
+                    p1.setLocation(0, 0);
+
+                    JP_content.removeAll();
+                    JP_content.add(p1, BorderLayout.CENTER);
+                    JP_content.revalidate();
+                    JP_content.repaint();
+                }   
+            }
+            
+       }catch(Exception ex){
+           JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+       }
+    }//GEN-LAST:event_btnEditarActionPerformed
 
     private void jB_EliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jB_EliminarActionPerformed
-        // TODO add your handling code here:
+        Connection con = null;
+        PreparedStatement prSt = null;
+        String query;
+        
+        try{
+            //obtiene el id de la celda selccionada del Jtable [0,1,2,3,4,.....]
+            int row = tablaLibros.getSelectedRow();
+            if(row <= -1){
+                javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar el libro a eliminar. \n", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                int column = 0;
+                int valorID = Integer.parseInt(tablaLibros.getModel().getValueAt(row, column).toString());
+                
+                if(valorID <= 0){
+                    javax.swing.JOptionPane.showMessageDialog(this, "Debe seleccionar el libro a borrar. \n", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
+                else{
+                    con = Conexion.getConnection();
+                    query = "DELETE FROM Libros WHERE IdLibro = ?";
+                    prSt = con.prepareStatement(query);
+                    prSt.setInt(1, valorID);
+                    prSt.executeUpdate();
+                    
+                    javax.swing.JOptionPane.showMessageDialog(this, "¡Libro borrado! \n", "HECHO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    cargarTabla();
+                }   
+            }
+            
+       }catch(SQLException ex){
+           JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+       }
     }//GEN-LAST:event_jB_EliminarActionPerformed
 
-    private void bidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bidActionPerformed
+    private void jtxtLibroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtxtLibroActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_bidActionPerformed
+    }//GEN-LAST:event_jtxtLibroActionPerformed
 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        Connection con = null;
+        PreparedStatement prSt = null;
+        ResultSet rs = null;
+        String query;
+        
+        try{
+            DefaultTableModel modeloTabla = (DefaultTableModel)tablaLibros.getModel();
+            modeloTabla.setRowCount(0);
+            String nomLibro = jtxtLibro.getText();
+            
+            con = Conexion.getConnection();
+            query = "SELECT  IdLibro, t.Titulo, Autor, Año, Categoria, Edicion, Ejemplares, Disponibles\n" +
+                    "FROM Libros lb\n" +
+                    "INNER JOIN Titulos t ON lb.IdTitulo = t.IdTitulo\n" +
+                    "INNER JOIN Autores a ON lb.IdAutor = a.IdAutor  \n" +
+                    "INNER JOIN Categorias c ON lb.IdCategoria = c.IdCategoria\n" +
+                    "WHERE t.Titulo LIKE ?";
+            prSt = con.prepareStatement(query);
+            prSt.setString(1, "%" + nomLibro + "%");
+            rs = prSt.executeQuery();
+            
+           
+            while(rs.next()){
+                 Object[] fila = new Object[8];
+                 for(int indice = 0; indice <8; indice++){
+                    fila[indice] = rs.getObject(indice +1);
+                 }
+                 modeloTabla.addRow(fila);
+            }
+            
+           
+        }catch(SQLException ex){
+           JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+       }
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void cargarTabla(){
+        DefaultTableModel modeloTabla = (DefaultTableModel)tablaLibros.getModel();
+        modeloTabla.setRowCount(0);
+        PreparedStatement ps;
+        ResultSet rs;
+        ResultSetMetaData rsmd;
+        int columnas;
+        
+        int[] anchos = {3,90,90,10,30,10,10,10};
+        for(int i=0; i<tablaLibros.getColumnCount();i++){
+            tablaLibros.getColumnModel().getColumn(i).setPreferredWidth(anchos[i]);
+        }
+        
+        try{
+            Connection con = Conexion.getConnection();
+            ps = con.prepareStatement("SELECT  IdLibro, t.Titulo, Autor, Año, Categoria, Edicion, Ejemplares, Disponibles \n" +
+                                      "FROM Libros lb\n" +
+                                      "INNER JOIN Titulos t ON lb.IdTitulo = t.IdTitulo\n" +
+                                      "INNER JOIN Autores a ON lb.IdAutor = a.IdAutor  \n" +
+                                      "INNER JOIN Categorias c ON lb.IdCategoria = c.IdCategoria");
+            rs = ps.executeQuery();
+            rsmd = rs.getMetaData();
+            columnas = rsmd.getColumnCount();
+            
+            while(rs.next()){
+                Object[] fila = new Object[columnas];
+                for(int indice = 0; indice <columnas; indice++){
+                    fila[indice] = rs.getObject(indice +1);
+                }
+                modeloTabla.addRow(fila);
+                
+            }
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error: " + ex.toString());
+        }
+        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Title;
-    private javax.swing.JTextField bid;
-    private javax.swing.JButton btnActualizar;
+    private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnEditar;
     private javax.swing.JButton btnNuevo;
     private javax.swing.JButton jB_Eliminar;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblLibros;
+    private javax.swing.JTextField jtxtLibro;
+    private javax.swing.JTable tablaLibros;
     // End of variables declaration//GEN-END:variables
 }
